@@ -12,3 +12,6 @@ clean:
 install: vpn
 	cp vpn  /usr/local/bin/vpn
 
+uninstall: vpn
+	rm /usr/local/vin/vpn
+
