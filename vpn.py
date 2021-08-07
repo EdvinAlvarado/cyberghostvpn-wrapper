@@ -12,19 +12,19 @@ def main():
     if vpn_installed():
         args = sys.argv
         cmd = []
-        for i in range(len(args)):
+        for i, arg in enumerate(args):
             if i==0:
                 cmd.append('cyberghostvpn')
             elif i==1:
                 one = {'stop':['--stop'], 'status':['--status'], 'help':['--help'], 'connect':['--traffic', '--connect', '--country-code']}
                 try:
-                    cmd.extend(one[args[i]])
+                    cmd.extend(one[arg])
                 except KeyError:
                     raise Exception("command cannot be found")
             elif i==2:
-                if '--country-code' ==  cmd[-1]:
-                    if len(args[i]) == 2:
-                        cmd.append(args[i])
+                if '--country-code' == cmd[-1]:
+                    if len(arg) == 2:
+                        cmd.append(arg)
                     else:
                         raise Exception("wrong country code")
             elif i==3:
