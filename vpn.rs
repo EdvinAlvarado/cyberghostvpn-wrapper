@@ -15,7 +15,16 @@ impl Status {
 
 fn main() -> Result<(), &'static str> {
     // Command | modifier | modifier | Result<Child> | Child | Result<ExitStatus> | ExitStatus | bool
-    if !Command::new("pacman").arg("-Qq").arg("cyberghostvpn").spawn().expect("cyberghostvpn is not installed").wait().expect("check wait failed").success() {return Err(Status::ProgramNotInstalled.as_str());}
+    if !Command::new("pacman")
+        .arg("-Qq")
+        .arg("cyberghostvpn")
+        .spawn()
+        .expect("cyberghostvpn is not installed")
+        .wait()
+        .expect("check wait failed")
+        .success() {
+            return Err(Status::ProgramNotInstalled.as_str());
+        }
     
     let mut vpn = Command::new("cyberghostvpn");
     // let arg_vec: Vec<String> = std::env::args().collect();
@@ -37,5 +46,12 @@ fn main() -> Result<(), &'static str> {
             _ => {return Err(Status::InputFailed.as_str());}
         }
     }
-    if vpn.spawn().expect("process failed").wait().expect("Wait error").success() {return Ok(());} else {return Err(Status::CommandFailed.as_str());}
+
+    if vpn.spawn()
+        .expect("process failed")
+        .wait()
+        .expect("Wait error")
+        .success() {
+            return Ok(());} else {return Err(Status::CommandFailed.as_str());
+        }
 }
