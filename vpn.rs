@@ -7,7 +7,7 @@ impl Status {
         match self {
             Self::ProgramNotInstalled   => "Program Not Installed",
             Self::CommandFailed         => "Command Failed",
-            Self::CountryFailed         => "Counry Failed",
+            Self::CountryFailed         => "Country Failed",
             Self::InputFailed           => "Input Failed",
         }
     }
