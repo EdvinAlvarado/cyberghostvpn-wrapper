@@ -2,6 +2,7 @@
 import subprocess
 import sys
 
+assert sys.version_info >= (3, 10) 
 
 def main():
     def vpn_installed():
@@ -13,23 +14,24 @@ def main():
         args = sys.argv
         cmd = []
         for i, arg in enumerate(args):
-            if i==0:
-                cmd.append('cyberghostvpn')
-            elif i==1:
-                one = {'stop':['--stop'], 'status':['--status'], 'help':['--help'], 'connect':['--traffic', '--connect', '--country-code']}
-                try:
-                    cmd.extend(one[arg])
-                except KeyError:
-                    raise Exception("command cannot be found")
-            elif i==2:
-                if '--country-code' == cmd[-1]:
-                    if len(arg) == 2:
-                        cmd.append(arg)
-                    else:
-                        raise Exception("wrong country code")
-            elif i==3:
-                cmd.append('--city')
-                cmd.append(f'{args[i]}')
+            match i:
+                case 0:
+                    cmd.append('cyberghostvpn')
+                case 1:
+                    one = {'stop':['--stop'], 'status':['--status'], 'help':['--help'], 'connect':['--traffic', '--connect', '--country-code']}
+                    try:
+                        cmd.extend(one[arg])
+                    except KeyError:
+                        raise Exception("command cannot be found")
+                case 2:
+                    if '--country-code' == cmd[-1]:
+                        if len(arg) == 2:
+                            cmd.append(arg)
+                        else:
+                            raise Exception("wrong country code")
+                case 3:
+                    cmd.append('--city')
+                    cmd.append(f'{args[i]}')
     else:
         raise Exception("cyberghostvpn is not installed or not using pacman")
 
