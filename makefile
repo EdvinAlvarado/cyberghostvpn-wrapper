@@ -3,11 +3,21 @@ WFLAGS = -Wall -Wextra
 SRC = vpn.cpp
 FLAGS = $(WFLAGS)
 
-vpn-rust: vpn.rs
-	rustc vpn.rs
+RUST_SRC = ./rusty_wrapper/src/main.rs
+RUST_RLS = ./rusty_wrapper/target/release/rusty_wrapper
+CARGO = ./rusty_wrapper/Cargo.toml
 
-vpn: $(SRC)
+PYTHON = vpn.py
+
+rust: $(RUST_SRC)
+	cargo build --manifest-path $(CARGO)
+	cp $(RUST_RLS) vpn
+
+cpp: $(SRC)
 	$(CC) $(FLAGS) $(SRC) -o vpn
+
+python: $(PYTHON)
+	cp $(PYTHON) ~/bin/vpn
 
 clean:
 	rm vpn
@@ -18,5 +28,3 @@ install: vpn
 uninstall: vpn
 	rm ~/bin/vpn
 
-pyinstall: vpn.py
-	cp vpn.py ~/bin/vpn

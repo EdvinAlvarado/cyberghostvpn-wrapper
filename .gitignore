@@ -2,3 +2,5 @@
 
 *.vim
 vpn
+rusty_wrapper/target/*
+rusty_wrapper/Cargo.lock
