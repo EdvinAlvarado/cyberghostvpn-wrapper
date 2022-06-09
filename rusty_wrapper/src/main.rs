@@ -1,24 +1,32 @@
 use std::process::Command;
+use std::error;
 
-enum Status {ProgramNotInstalled=1, CommandFailed=2, CountryFailed=3, InputFailed=4}
+#[derive(Debug)]
+enum Status {
+    ProgramNotInstalled,
+    CommandFailed,
+    CountryFailed,
+    InputFailed
+}
 
-impl Status {
-    fn as_str(self) -> &'static str {
+impl std::error::Error for Status {}
+impl std::fmt::Display for Status {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
-            Self::ProgramNotInstalled   => "Program Not Installed",
-            Self::CommandFailed         => "Command Failed",
-            Self::CountryFailed         => "Country Failed",
-            Self::InputFailed           => "Input Failed",
+            Status::ProgramNotInstalled => write!(f, "Program not Installed"),
+            Status::CommandFailed => write!(f, "Command Failed"),
+            Status::CountryFailed => write!(f, "Country Failed"),
+            Status::InputFailed=> write!(f, "Input Failed"),
         }
     }
 }
 
-fn main() -> Result<(), &'static str> {
+fn main() -> Result<(), Box<dyn error::Error>> {
     // Command | modifier | modifier | Result<Child> | Child | Result<ExitStatus> | ExitStatus | bool
     if !Command::new("pacman").arg("-Qq").arg("cyberghostvpn").spawn().expect("cyberghostvpn is not installed")
         .wait().expect("check wait failed")
         .success() {
-            return Err(Status::ProgramNotInstalled.as_str());
+            return Err(Box::new(Status::ProgramNotInstalled));
     }
     
     let mut vpn = Command::new("cyberghostvpn");
@@ -32,19 +40,20 @@ fn main() -> Result<(), &'static str> {
                     "stop"      => {vpn.arg("--stop");},
                     "help"      => {vpn.arg("--stop");},
                     "status"    => {vpn.arg("--status");},
+                    "setup"     => {vpn.arg("--setup");},
                     "connect"   => {vpn.arg("--traffic").arg("--connect").arg("--country-code");},
-                    _           => return Err(Status::InputFailed.as_str()),
+                    _           => return Err(Box::new(Status::InputFailed)),
                 }
             },
-            2 => {if ar.len() == 2 {vpn.arg(&ar);} else {return Err(Status::CountryFailed.as_str());}},
+            2 => {if ar.len() == 2 {vpn.arg(&ar);} else {return Err(Box::new(Status::CountryFailed));}},
             3 => {vpn.arg("--city").arg(format!("'{}'", ar));},
-            _ => {return Err(Status::InputFailed.as_str());}
+            _ => {return Err(Box::new(Status::InputFailed));}
         }
     }
 
     if vpn.spawn().expect("process failed")
         .wait().expect("Wait error")
         .success() {
-            return Ok(());} else {return Err(Status::CommandFailed.as_str());
+            return Ok(());} else {return Err(Box::new(Status::CommandFailed));
         }
 }
