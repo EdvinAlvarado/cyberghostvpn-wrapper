@@ -1,5 +1,5 @@
 use std::process::Command;
-use std::error;
+use std::error::Error;
 
 #[derive(Debug)]
 enum Status {
@@ -9,7 +9,7 @@ enum Status {
     InputFailed
 }
 
-impl std::error::Error for Status {}
+impl Error for Status {}
 impl std::fmt::Display for Status {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
@@ -21,7 +21,7 @@ impl std::fmt::Display for Status {
     }
 }
 
-fn main() -> Result<(), Box<dyn error::Error>> {
+fn main() -> Result<(), Box<dyn Error>> {
     // Command | modifier | modifier | Result<Child> | Child | Result<ExitStatus> | ExitStatus | bool
     if !Command::new("pacman").arg("-Qq").arg("cyberghostvpn").spawn().expect("cyberghostvpn is not installed")
         .wait().expect("check wait failed")
